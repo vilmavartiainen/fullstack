@@ -26,15 +26,14 @@ const Part = (props) => {
     </div>
   )
 }
-/*
+
 const Total = (props) => {
-  console.log(props)
   return(
     <div>
-      <p>Total of exercises is : {props.exercises1 +props.exercises2 + props.exercises3 }</p>
+      <p>Total of exercises is: {props.exercises} </p>
     </div>
   )
-}*/
+}
 
   const App = () => {
     const course = 'Half Stack application development'
@@ -54,9 +53,10 @@ const Total = (props) => {
   return (
     <div>
       <Header course={course} />
-      <Content part1={"In part: "+ part1.name + "cnumber of exercises is " + part1.exercises} 
+      <Content content part1={"In part: "+ part1.name + "cnumber of exercises is " + part1.exercises} 
       part2={"In part: " + part2.name + " number of exercises is " + part2.exercises} 
-      part3={"In part: " + part3.name + " number of exercises is " + part3.exercises} 
+      part3={"In part: " + part3.name + " number of exercises is " + part3.exercises} />
+      <Total total exercises={part1.exercises + part2.exercises + part3.exercises} 
       />
     </div>
   )
@@ -64,6 +64,4 @@ const Total = (props) => {
 
 export default App
 
-      /*
-      <Total exercises1={exercises1} exercises2={exercises2} exercises3={exercises3} 
-      /> */
+ 
