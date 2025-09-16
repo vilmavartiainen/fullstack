@@ -11,14 +11,24 @@ const App = () => {
     'Programming without an extremely heavy use of console.log is same as if a doctor would refuse to use x-rays or blood tests when dianosing patients.',
     'The only way to go fast, is to go well.'
   ]
+
+  const satunnainen = (min, max) => {
+    min = Math.ceil(min)
+    max = Math.ceil(max)
+
+    return Math.floor(Math.random() * (max-min)) + min
+  }
    
   const [selected, setSelected] = useState(0)
 
   return (
     <div>
       {anecdotes[selected]}
+      <div>
+      <button onClick={()=>setSelected(satunnainen(0,anecdotes.length))}>next anecodote</button>
+      </div>
     </div>
   )
-}
+}  
 
 export default App
