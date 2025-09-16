@@ -6,6 +6,7 @@ const Statistics = (props) =>{
         <StatisticLine text="good " value={props.good} />
         <StatisticLine text="neutral "value={props.neutral}/>
         <StatisticLine text="bad "value={props.bad}/>
+        <StatisticLine text="all "value={props.total}/>
         <StatisticLine text="average "value={props.average}/>
         <StatisticLine text="positive "value={props.positive + "%"}/>
     </div>
@@ -47,7 +48,7 @@ const App = () => {
       </div>
       <h1>statistics</h1>
         <div>
-        {total < 1 ? <p>No feedback given </p> : <Statistics good ={good} neutral={neutral} bad={bad} average={average} positive={positive}/>}
+        {total < 1 ? <p>No feedback given </p> : <Statistics good ={good} neutral={neutral} bad={bad} total={total} average={average} positive={positive}/>}
       </div>
     </div>
   )
