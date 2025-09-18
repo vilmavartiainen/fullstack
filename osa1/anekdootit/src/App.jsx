@@ -1,5 +1,9 @@
 import { useState } from 'react'
 
+const mostVotes = () =>{
+  
+}
+
 const App = () => {
   const anecdotes = [
     'If it hurts, do it more often.',
@@ -28,19 +32,32 @@ const App = () => {
   setVotes(copy)
   }
 
+
+
+  /*function MostVotes({}){
+    return(
+      <div>
+        {selected.votes > selected ? <p>{anecdotes[selected]}</p> : <p>{anecdotes[selected]}</p>}
+      </div>
+    )
+  }*/
+
   return (
     <div>
+      <h1>Anecdote of the day</h1>
      <p> {anecdotes[selected]}</p>
       <div>
-        <p>has {votes[selected]}</p>
+        <p>has {votes[selected]} vote</p>
       <button onClick={()=>setSelected(satunnainen(0,anecdotes.length))}>next anecdote</button>
       <button onClick={vote}>vote</button>
-      
+      </div>
+      <div>
+        <h1>Anecdote with most votes</h1>
+        <p>{anecdotes[selected]}</p>
+        <p>has {votes[selected]} vote</p>
       </div>
     </div>
   )
 }  
 
 export default App
-
-// <button onClick={()=> setVotes(votes +1)}>vote</button>
