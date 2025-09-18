@@ -1,7 +1,7 @@
 import { useState } from 'react'
 
 const mostVotes = () =>{
-  
+
 }
 
 const App = () => {
@@ -23,8 +23,9 @@ const App = () => {
     return Math.floor(Math.random() * (max-min)) + min
   }
    
+  const taulukko = new Array(anecdotes.length).fill(0)
   const [selected, setSelected] = useState(0)   
-  const [votes, setVotes] = useState(Array(anecdotes.length).fill(0))
+  const [votes, setVotes] = useState(taulukko)
 
   const vote = () => {
   const copy =[...votes]
@@ -32,15 +33,6 @@ const App = () => {
   setVotes(copy)
   }
 
-
-
-  /*function MostVotes({}){
-    return(
-      <div>
-        {selected.votes > selected ? <p>{anecdotes[selected]}</p> : <p>{anecdotes[selected]}</p>}
-      </div>
-    )
-  }*/
 
   return (
     <div>
@@ -51,12 +43,7 @@ const App = () => {
       <button onClick={()=>setSelected(satunnainen(0,anecdotes.length))}>next anecdote</button>
       <button onClick={vote}>vote</button>
       </div>
-      <div>
-        <h1>Anecdote with most votes</h1>
-        <p>{anecdotes[selected]}</p>
-        <p>has {votes[selected]} vote</p>
       </div>
-    </div>
   )
 }  
 
