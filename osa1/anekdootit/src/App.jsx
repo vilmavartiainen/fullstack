@@ -1,7 +1,18 @@
 import { useState } from 'react'
 
-const mostVotes = () =>{
-
+const MostVotes = (props) =>{
+  var a = 0
+  for(var i = 0; i<=props.votes.length; i++){
+    if(props.votes[i] > props.votes[a]){
+      a = i 
+    }
+  }
+    return(
+      <div>
+       <p> {props.anecdotes[a]}</p>
+       <p>has {props.votes[a]} votes</p>
+      </div>
+    )
 }
 
 const App = () => {
@@ -42,6 +53,10 @@ const App = () => {
         <p>has {votes[selected]} vote</p>
       <button onClick={()=>setSelected(satunnainen(0,anecdotes.length))}>next anecdote</button>
       <button onClick={vote}>vote</button>
+      </div>
+      <div>
+        <h1>Anecdote with most votes</h1>
+      <MostVotes anecdotes={anecdotes} votes={votes}/>
       </div>
       </div>
   )
