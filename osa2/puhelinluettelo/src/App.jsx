@@ -2,9 +2,9 @@ import { useEffect, useState } from 'react'
 import axios from 'axios'
 import personService from './services/persons'
 
-const Persons = ({person}) => {
+const Persons = ({person, poista}) => {
   return(
-    <li> {person.name} {person.number}</li>
+    <li> {person.name} {person.number} <button onClick={()=>poista(person.id)}>delete</button></li>
   )
 }
 
@@ -34,9 +34,24 @@ const PersonForm = ({addNameandNumber,newName, handleNameChange, newNumber, hand
   )
 }
 
-const App = () => {
-  const [persons, setPersons] = useState([]) 
 
+const App = () => {
+  const [persons, setPersons] = useState([])  // lista henkilöistä
+  const [newName, setNewName] = useState('')  // uusi henkilö
+  const [newNumber, setNewNumber] = useState('') // uuden henkilön nro
+  const [newSearch, setNewSearch] = useState('') // hakukentän arvo
+
+  //kustutaan deletePerson funktiota ja poistetaan henkilö listasta
+  const poista = (id) => {
+  console.log("delete clicked", id)
+  personService  
+    .deletePerson(id)
+    .then(() => {
+    setPersons(persons.filter((person) => person.id !== id))
+    })
+  }
+
+// haetaan henkilöt db.json:ista
   useEffect(() => {
     personService
       .getAll()
@@ -46,34 +61,34 @@ const App = () => {
 
   }, [])
 
-  const [newName, setNewName] = useState('')
-  const [newNumber, setNewNumber] = useState('')
-  const [newSearch, setNewSearch] = useState('')
 
   const addNameandNumber = (event) => {
     event.preventDefault()
     console.log('newName:', newName)    
-    const nameObejct ={
+    const nameObejct = {
       name: newName,
       number: newNumber
     }
-    const onJo = persons.filter(person => person.name.toLowerCase() === newName.toLowerCase())
+    
+    //tarkistus onko nimi listassa
+    const onJo = persons.filter(person => person.name && person.name.toLowerCase() === newName.toLowerCase())
     console.log(onJo)
 
     if(onJo.length > 0){
       alert(`${newName} is already added to phonebook`)
     } else{
+      //uusi henkilö jos sitä ei ole jo listassa
       personService
       .create(nameObejct)
       .then(returnedPerson => {
+      console.log("returnedPerson:", returnedPerson)
       setPersons(persons.concat(returnedPerson))
       setNewName('')
       setNewNumber('')
       })
+
     
   }
-
-
 
   }
 const handleNameChange = (event) => {
@@ -90,8 +105,9 @@ const handleNewSearch = (event) =>{
   setNewSearch(event.target.value)
 } 
 
+
 // Luodaan uusi lista, jossa on vain ne nimet, jotka vastaavat hakukentän syötettä
-const filtered = persons.filter(person => person.name.toLowerCase().includes(newSearch.toLowerCase()))
+const filtered = persons.filter(person => person.name && person.name.toLowerCase().includes(newSearch.toLowerCase()))
 console.log(filtered) 
 
   return (
@@ -102,10 +118,10 @@ console.log(filtered)
       <h2>Numbers</h2>
       <ul>
       {filtered.map((person)=>(
-       <Persons key={person.name} person = {person}/>
+       <Persons key={person.name} person = {person} poista ={poista}/>
      ))}
      </ul>
-    </div>
+    </div> 
   )
 
 }
