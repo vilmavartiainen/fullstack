@@ -1,4 +1,5 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import axios from 'axios'
 
 const Persons = ({person}) => {
   return(
@@ -33,26 +34,34 @@ const PersonForm = ({addNameandNumber,newName, handleNameChange, newNumber, hand
 }
 
 const App = () => {
-  const [persons, setPersons] = useState([
-    { name: 'Arto Hellas', number: "040-555666"},
-    { name: 'Matti Meikäläinen', number: '050-1234567' },
-    { name: 'Liisa Virtanen', number: '044-9876543' },
-    { name: 'Pekka Mäkinen', number: '041-2223334' },
-    { name: 'Sari Korhonen', number: '045-7778889' }
-  ]) 
+  const [persons, setPersons] = useState([]) 
+
+  useEffect(() => {
+    axios
+      .get('http://localhost:3001/persons')
+      .then(response => {
+        setPersons(persons.concat(response.data))
+      })
+
+  }, [])
+
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [newSearch, setNewSearch] = useState('')
 
   const addNameandNumber = (event) => {
     event.preventDefault()
-    console.log('newName:', newName)
-
-    
+    console.log('newName:', newName)    
     const nameObejct ={
       name: newName,
       number: newNumber
     }
+
+      axios.post('http://localhost:3001/persons', nameObejct).then((response)=>{
+        setPersons(persons.concat(response.data))
+        setNewName('')
+        setNewNumber('')
+      })
 
     const onJo = persons.filter(person => person.name === newName)
     console.log(onJo)
