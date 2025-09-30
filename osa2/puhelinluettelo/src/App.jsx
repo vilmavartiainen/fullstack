@@ -51,6 +51,17 @@ const App = () => {
     })
   }
 
+  //korvataan vanha numero uudella
+  const replace = (id, newNumber) => {
+    const person = persons.find((n) => n.id === id)
+    const changedNumber = {...person, number: newNumber}
+
+    personService  
+      .replaceNumber(id, changedNumber)
+      .then((returnedPerson) => {
+      setPersons(persons.map((person) => person.id !== id ? person: returnedPerson))
+      })
+    }
 // haetaan henkilöt db.json:ista
   useEffect(() => {
     personService
@@ -75,7 +86,10 @@ const App = () => {
     console.log(onJo)
 
     if(onJo.length > 0){
-      alert(`${newName} is already added to phonebook`)
+      if(window.confirm(`${newName} is already added to phonebook, replace the old number with a new one?`)){
+      //jos käyttäjää painaa ok numero vaihtuu, jos painaa peru mitään ei tapahdu  
+      replace(onJo[0].id, newNumber)
+      }
     } else{
       //uusi henkilö jos sitä ei ole jo listassa
       personService
@@ -106,6 +120,7 @@ const handleNewSearch = (event) =>{
 } 
 
 
+
 // Luodaan uusi lista, jossa on vain ne nimet, jotka vastaavat hakukentän syötettä
 const filtered = persons.filter(person => person.name && person.name.toLowerCase().includes(newSearch.toLowerCase()))
 console.log(filtered) 
@@ -114,7 +129,7 @@ console.log(filtered)
     <div>
       <h2>Phonebook</h2>
       <Filter value={newSearch} onChange={handleNewSearch}/>
-        <PersonForm addNameandNumber={addNameandNumber} newName={newName} handleNameChange={handleNameChange} newNumber={newNumber} handleNumberChange={handleNumberChange}/>
+        <PersonForm addNameandNumber={addNameandNumber} newName={newName} handleNameChange={handleNameChange} newNumber={newNumber} handleNumberChange={handleNumberChange} replace={replace}/>
       <h2>Numbers</h2>
       <ul>
       {filtered.map((person)=>(
