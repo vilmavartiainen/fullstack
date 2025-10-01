@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react'
-import axios from 'axios'
 import personService from './services/persons'
 
 const Persons = ({person, poista}) => {
@@ -11,7 +10,7 @@ const Persons = ({person, poista}) => {
 const Filter = ({value, onChange}) =>
 {
     return(
-        <li>filter shown with <input value={value} onChange={onChange}/></li>
+        <div>filter shown with <input value={value} onChange={onChange}/></div>
     )
 }
 
@@ -34,20 +33,61 @@ const PersonForm = ({addNameandNumber,newName, handleNameChange, newNumber, hand
   )
 }
 
+const Notification = ({message}) => {
+  if (message === null){
+  return null
+  }
+  return(
+    <div className='added'>
+      {message}
+    </div>
+  )
+}
+
+const Notification2 = ({message}) =>{
+  if (message === null){
+    return null
+  }
+  return(
+    <div className='deleted'>{message}</div>
+  )
+}
+
+const Notification3 = ({message}) => {
+  if(message === null){
+    return null
+  }
+  return(
+    <div className='number'>{message}</div>
+  )
+}
 
 const App = () => {
   const [persons, setPersons] = useState([])  // lista henkilöistä
   const [newName, setNewName] = useState('')  // uusi henkilö
   const [newNumber, setNewNumber] = useState('') // uuden henkilön nro
   const [newSearch, setNewSearch] = useState('') // hakukentän arvo
+  const [addedPersonMsg, setaddedPersonMsg] = useState(null)
+  const [deletePersonMsg, setdeletedPersonMsg] = useState(null)
+  const [numberChange, setNumberChange] = useState(null)
 
   //kustutaan deletePerson funktiota ja poistetaan henkilö listasta
   const poista = (id) => {
   console.log("delete clicked", id)
+  const deletedPerson = persons.find((p => p.id === id))
   personService  
     .deletePerson(id)
     .then(() => {
     setPersons(persons.filter((person) => person.id !== id))
+    // ilmoitus näytölle että henkilö on poistettu
+    setdeletedPersonMsg(
+      `'${deletedPerson.name}' deleted from the phonebook`)
+      setTimeout(() => {
+          setdeletedPersonMsg(null)
+      }, 5000)
+    })
+    .catch((error) => {
+      alert(`error with deleting ${error.message}`)
     })
   }
 
@@ -88,23 +128,35 @@ const App = () => {
     if(onJo.length > 0){
       if(window.confirm(`${newName} is already added to phonebook, replace the old number with a new one?`)){
       //jos käyttäjää painaa ok numero vaihtuu, jos painaa peru mitään ei tapahdu  
+      //tähän ilmotus jos numero lisätään
       replace(onJo[0].id, newNumber)
+      setNumberChange(`'${newName}'s old number changed to '${newNumber}' `)
+      setTimeout(() => {
+        setNumberChange(null)
+      }, 5000)
       }
     } else{
       //uusi henkilö jos sitä ei ole jo listassa
       personService
-      .create(nameObejct)
-      .then(returnedPerson => {
-      console.log("returnedPerson:", returnedPerson)
-      setPersons(persons.concat(returnedPerson))
-      setNewName('')
-      setNewNumber('')
+        .create(nameObejct)
+        .then(returnedPerson => {
+        console.log("returnedPerson:", returnedPerson)
+        setPersons(persons.concat(returnedPerson))
+        setNewName('')
+        setNewNumber('')
+      // ilmoitus lisätystä henkilöstä
+        setaddedPersonMsg(
+      `'${returnedPerson.name}' added to phonebook`)
+        setTimeout(() => {
+        setaddedPersonMsg(null)
+    }, 5000)
+  })
+      .catch((error) => {
+        alert(`error with adding new name ${error.message}`)
       })
-
-    
+    }
   }
 
-  }
 const handleNameChange = (event) => {
   setNewName(event.target.value)
 } 
@@ -128,8 +180,11 @@ console.log(filtered)
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={addedPersonMsg}/>
+      <Notification2 message={deletePersonMsg}/>
+      <Notification3 message={numberChange}/>
       <Filter value={newSearch} onChange={handleNewSearch}/>
-        <PersonForm addNameandNumber={addNameandNumber} newName={newName} handleNameChange={handleNameChange} newNumber={newNumber} handleNumberChange={handleNumberChange} replace={replace}/>
+        <PersonForm addNameandNumber={addNameandNumber} newName={newName} handleNameChange={handleNameChange} newNumber={newNumber} handleNumberChange={handleNumberChange}/>
       <h2>Numbers</h2>
       <ul>
       {filtered.map((person)=>(
