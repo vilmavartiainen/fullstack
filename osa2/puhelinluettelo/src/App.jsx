@@ -33,6 +33,7 @@ const PersonForm = ({addNameandNumber,newName, handleNameChange, newNumber, hand
   )
 }
 
+//Ilmoitus, että henkilön lisääminen on onnistunut
 const Notification = ({message}) => {
   if (message === null){
   return null
@@ -44,6 +45,7 @@ const Notification = ({message}) => {
   )
 }
 
+// Ilmoitus, henkilön poistaminen on onnistunut
 const Notification2 = ({message}) =>{
   if (message === null){
     return null
@@ -53,6 +55,7 @@ const Notification2 = ({message}) =>{
   )
 }
 
+//Ilmoitus: henkilön numeron muutos on onnistunut
 const Notification3 = ({message}) => {
   if(message === null){
     return null
@@ -127,8 +130,7 @@ const App = () => {
 
     if(onJo.length > 0){
       if(window.confirm(`${newName} is already added to phonebook, replace the old number with a new one?`)){
-      //jos käyttäjää painaa ok numero vaihtuu, jos painaa peru mitään ei tapahdu  
-      //tähän ilmotus jos numero lisätään
+      //jos käyttäjää painaa ok numero vaihtuu, jos painaa peru, mitään ei tapahdu  
       replace(onJo[0].id, newNumber)
       setNumberChange(`'${newName}'s old number changed to '${newNumber}' `)
       setTimeout(() => {

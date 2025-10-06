@@ -1,44 +1,19 @@
 {
   "persons": [
     {
+      "id": "4ae1",
       "name": "Ada Lovelace",
-      "number": "39-44-5323523",
-      "id": "2"
+      "number": "39-44-5323523"
     },
     {
-      "name": "Dan Abramov",
-      "number": "12-43-234345",
-      "id": "3"
+      "id": "7eea",
+      "name": "Juuso",
+      "number": "044-33333"
     },
     {
-      "id": "689e",
-      "name": "maria",
-      "number": "098764"
-    },
-    {
-      "id": "1465",
-      "name": "jeesus",
-      "number": "09875"
-    },
-    {
-      "id": "3f54",
-      "name": "juudas",
-      "number": "12345"
-    },
-    {
-      "id": "4f02",
-      "name": "mooses",
-      "number": "5644389459"
-    },
-    {
-      "id": "00fb",
-      "name": "makkara",
-      "number": "758072"
-    },
-    {
-      "id": "168b",
-      "name": "vilma",
-      "number": "6666"
+      "id": "edf8",
+      "name": "Justus ",
+      "number": "342940204"
     }
   ]
 }
