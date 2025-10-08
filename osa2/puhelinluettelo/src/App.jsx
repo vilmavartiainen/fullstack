@@ -45,7 +45,7 @@ const Notification = ({message}) => {
   )
 }
 
-// Ilmoitus, henkilön poistaminen on onnistunut
+// Ilmoitus, että henkilön poistaminen on onnistunut
 const Notification2 = ({message}) =>{
   if (message === null){
     return null
