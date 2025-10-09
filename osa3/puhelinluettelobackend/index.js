@@ -1,7 +1,15 @@
 const express = require('express')
+const morgan = require('morgan')
 const app = express()
 
 app.use(express.json())
+
+
+// ei toimi muuta jossain vaiheessa
+morgan.token('body', request => {
+   return JSON.stringify(request.body)
+})
+app.use(morgan(':method :url :status :body'))
 
 let persons = [
     {
