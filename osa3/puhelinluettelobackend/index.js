@@ -1,15 +1,20 @@
 const express = require('express')
 const morgan = require('morgan')
 const app = express()
+const cors = require('cors')
 
+app.use(cors())
 app.use(express.json())
-
+app.use(morgan('tiny'))
+app.use(express.static('dist'))
 
 // ei toimi muuta jossain vaiheessa
-morgan.token('body', request => {
+/*morgan.token('body', request => {
    return JSON.stringify(request.body)
 })
-app.use(morgan(':method :url :status :body'))
+app.use(morgan(':method :url :status :body'))*/
+
+
 
 let persons = [
     {
@@ -87,12 +92,13 @@ app.post('/api/persons', (request, response) => {
         number: body.number,
         id: newId(),
       }
-
+    
       console.log(person)
       response.json(person)
   })
 
 
-const PORT = 3001
-app.listen(PORT)
-console.log(`Server running on port ${PORT}`)
+const PORT = process.env.PORT || 3001
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`)
+})
