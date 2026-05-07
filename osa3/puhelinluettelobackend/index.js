@@ -4,6 +4,7 @@ const morgan = require('morgan')
 const cors = require('cors')
 const Person = require('./models/person')
 
+
 const app = express()
 
 const errorHandler = (error, request, response, next) =>{
@@ -131,3 +132,27 @@ const PORT = process.env.PORT || 3001
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
 })
+
+/*const mongoose = require('mongoose')
+
+
+const password = process.argv[2]
+const url = `mongodb+srv://vilmaovartiainen:${password}@cluster0.jfxgrvb.mongodb.net/puhelinluettelo?retryWrites=true&w=majority&appName=Cluster0`
+
+mongoose.set('strictQuery',false)
+mongoose.connect(url, { family: 4 })
+    .then(result=>{
+        console.log('connected to MongoDB')
+    })
+    .catch((error) => {
+        console.log('error connecting to MongoDB: ', error.message)
+    })
+
+const personSchema = new mongoose.Schema({
+  name: String,
+  number: String,
+})
+
+const Person = mongoose.model('Person', personSchema)
+
+module.exports = mongoose.model('Person', personSchema)*/
