@@ -35,13 +35,16 @@ app.get('/api/persons',(request, response, next) => {
     .catch(error => next(error))
 })
 
-/*app.get('/info',(request, response) => {
+app.get('/info',(request, response) => {
     const date = new Date();
-    const p = persons.length
+
+    Person.find({}).then((persons) =>{
     response.writeHead(200, { 'Content-Type': 'text/plain' })
-    response.end('Phonebook has info for ' + p + ' people\n' + date )
-    
-})*/
+    response.end('Phonebook has info for ' + persons.length + ' people\n' + date )
+    }
+)
+    .catch(error => next(error))
+})
 
 app.get('/api/persons/:id', (request, response, next) => {
     Person.findById(request.params.id)
@@ -52,7 +55,7 @@ app.get('/api/persons/:id', (request, response, next) => {
             response.status(404).end()
         }
     })
-    .catch((error) => next(error))
+    .catch(error => next(error))
 })
 
 app.put('/api/persons/:id',(request, response, next) => {
@@ -116,7 +119,7 @@ app.post('/api/persons', (request, response) => {
     person.save().then((savedPerson) => {
         response.json(savedPerson)
     })
-
+        .catch(error => next(error))
   })
 
 
@@ -132,27 +135,3 @@ const PORT = process.env.PORT || 3001
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
 })
-
-/*const mongoose = require('mongoose')
-
-
-const password = process.argv[2]
-const url = `mongodb+srv://vilmaovartiainen:${password}@cluster0.jfxgrvb.mongodb.net/puhelinluettelo?retryWrites=true&w=majority&appName=Cluster0`
-
-mongoose.set('strictQuery',false)
-mongoose.connect(url, { family: 4 })
-    .then(result=>{
-        console.log('connected to MongoDB')
-    })
-    .catch((error) => {
-        console.log('error connecting to MongoDB: ', error.message)
-    })
-
-const personSchema = new mongoose.Schema({
-  name: String,
-  number: String,
-})
-
-const Person = mongoose.model('Person', personSchema)
-
-module.exports = mongoose.model('Person', personSchema)*/
