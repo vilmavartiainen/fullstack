@@ -80,15 +80,7 @@ app.put('/api/persons/:id',(request, response, next) => {
     })
     .catch(error => next(error))
 })
-/* const id = request.params.id
-    const person = persons.find(person => person.id === id)
 
-    if(person){
-        response.json(person)
-    }else {
-        response.status(404).end()
-    }
-  })*/
 
 // Käyttäjän poistaminen
 app.delete('/api/persons/:id', (request, response, next) => {
@@ -102,23 +94,7 @@ app.delete('/api/persons/:id', (request, response, next) => {
 
 app.post('/api/persons', (request, response, next) => {
   const body = request.body
-  //const personsWithSameName = persons.filter(person => person.name && person.name.toLowerCase() === body.name.toLowerCase())
 
-  /* if(personsWithSameName.length > 0) {
-        return response.status(400).json({
-            error: 'name must be unique'
-            })
-     }*/
-  /*if(!body.name){
-        return response.status(400).json({
-            error: 'name is missing'})
-    }
-
-    if (!body.number){
-        return response.status(400).json({
-            error: 'name is missing'
-            })
-        }*/
 
   const person = new Person({
     name: body.name,
