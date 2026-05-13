@@ -25,10 +25,19 @@ mongoose
   }) 
 
 const personSchema = new mongoose.Schema({
-  name: String,
-  number: String,
-})
+    name: {
+        type: String,
+        minLength: 3,
+        required: true
 
+    },
+
+   /*number: {
+        type: String,
+        minlength: 8,
+        required: true
+    }*/
+})
 personSchema.set('toJSON', {
   transform: (document, returnedObject) => {
     returnedObject.id = returnedObject._id.toString()

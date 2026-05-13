@@ -10,7 +10,9 @@ const app = express()
 const errorHandler = (error, request, response, next) =>{
       if (error.name === 'CastError') {
     return response.status(400).send({ error: 'malformatted id' })
-  }
+  } else if (error.name === 'ValidationError') {
+    return response.status(400).json({error: error.message})
+}
 
   next(error)
 }
@@ -35,7 +37,8 @@ app.get('/api/persons',(request, response, next) => {
     .catch(error => next(error))
 })
 
-app.get('/info',(request, response) => {
+//Info sivu, kertoo montako nimeä puhelinluettelossa on ja ajan sekä päivämäärän
+app.get('/info',(request, response, next) => {
     const date = new Date();
 
     Person.find({}).then((persons) =>{
@@ -87,6 +90,7 @@ app.put('/api/persons/:id',(request, response, next) => {
     }
   })*/
 
+// Käyttäjän poistaminen 
 app.delete('/api/persons/:id', (request, response, next) => {
     Person.findByIdAndDelete(request.params.id)
     .then((result) => {
@@ -95,7 +99,7 @@ app.delete('/api/persons/:id', (request, response, next) => {
     .catch((error) => next(error))
 })
 
-app.post('/api/persons', (request, response) => {
+app.post('/api/persons', (request, response, next) => {
     const body = request.body
     //const personsWithSameName = persons.filter(person => person.name && person.name.toLowerCase() === body.name.toLowerCase())
 
@@ -104,12 +108,16 @@ app.post('/api/persons', (request, response) => {
             error: 'name must be unique' 
             })
      }*/
-
-    if(!body.name || !body.number){
+    /*if(!body.name){
         return response.status(400).json({
-            error: 'name or number is missing'
+            error: 'name is missing'})
+    }
+
+    if (!body.number){
+        return response.status(400).json({
+            error: 'name is missing'
             })
-        }
+        }*/
        
     const person = new Person({
         name: body.name,
@@ -135,3 +143,4 @@ const PORT = process.env.PORT || 3001
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
 })
+
