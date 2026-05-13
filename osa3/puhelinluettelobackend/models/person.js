@@ -16,27 +16,26 @@ const number = process.argv[4]
 */
 
 mongoose
-     .connect(url)
-     .then(result => {
+  .connect(url)
+  .then(() => {
     console.log('connected to MongoDB')
   })
   .catch((error) => {
     console.log('error connecting to MongoDB:', error.message)
-  }) 
+  })
 
 const personSchema = new mongoose.Schema({
-    name: {
-        type: String,
-        minLength: 3,
-        required: true
+  name: {
+    type: String,
+    minLength: 3,
+    required: true
 
-    },
+  },
 
-   /*number: {
+  number: {
         type: String,
-        minlength: 8,
         required: true
-    }*/
+    }
 })
 personSchema.set('toJSON', {
   transform: (document, returnedObject) => {
@@ -52,7 +51,7 @@ personSchema.set('toJSON', {
 /*
 const person = new Person({
   name: name,
-  number: number, 
+  number: number,
 })
 
 if(process.argv.length === 3){

@@ -7,12 +7,12 @@ const Person = require('./models/person')
 
 const app = express()
 
-const errorHandler = (error, request, response, next) =>{
-      if (error.name === 'CastError') {
+const errorHandler = (error, request, response, next) => {
+  if (error.name === 'CastError') {
     return response.status(400).send({ error: 'malformatted id' })
   } else if (error.name === 'ValidationError') {
-    return response.status(400).json({error: error.message})
-}
+    return response.status(400).json({ error: error.message })
+  }
 
   next(error)
 }
@@ -31,56 +31,56 @@ app.use(morgan(':method :url :status :body'))*/
 
 
 app.get('/api/persons',(request, response, next) => {
-    Person.find({}).then((persons) => {
-        response.json(persons)
-    })
+  Person.find({}).then((persons) => {
+    response.json(persons)
+  })
     .catch(error => next(error))
 })
 
 //Info sivu, kertoo montako nimeä puhelinluettelossa on ja ajan sekä päivämäärän
 app.get('/info',(request, response, next) => {
-    const date = new Date();
+  const date = new Date()
 
-    Person.find({}).then((persons) =>{
+  Person.find({}).then((persons) => {
     response.writeHead(200, { 'Content-Type': 'text/plain' })
     response.end('Phonebook has info for ' + persons.length + ' people\n' + date )
-    }
-)
+  }
+  )
     .catch(error => next(error))
 })
 
 app.get('/api/persons/:id', (request, response, next) => {
-    Person.findById(request.params.id)
+  Person.findById(request.params.id)
     .then((person) => {
-        if (person) {
+      if (person) {
         response.json(person)
-        } else {
-            response.status(404).end()
-        }
+      } else {
+        response.status(404).end()
+      }
     })
     .catch(error => next(error))
 })
 
 app.put('/api/persons/:id',(request, response, next) => {
-    const {name, number} = request.body
+  const { name, number } = request.body
 
-    Person.findById(request.params.id)
+  Person.findById(request.params.id)
     .then(person => {
-        if(!person){
-            return response.status(404).end()
-    }
-        person.name = name
-        person.number = number
+      if(!person){
+        return response.status(404).end()
+      }
+      person.name = name
+      person.number = number
 
-        console.log('Updating person', person)
-        return person.save().then((updatedPerson) => {
-            response.json(updatedPerson)
-        })
+      console.log('Updating person', person)
+      return person.save().then((updatedPerson) => {
+        response.json(updatedPerson)
+      })
         .catch(error => next(error))
     })
     .catch(error => next(error))
 })
-   /* const id = request.params.id
+/* const id = request.params.id
     const person = persons.find(person => person.id === id)
 
     if(person){
@@ -90,25 +90,26 @@ app.put('/api/persons/:id',(request, response, next) => {
     }
   })*/
 
-// Käyttäjän poistaminen 
+// Käyttäjän poistaminen
 app.delete('/api/persons/:id', (request, response, next) => {
-    Person.findByIdAndDelete(request.params.id)
-    .then((result) => {
-        response.status(204).end()
+  Person.findByIdAndDelete(request.params.id)
+    .then((
+    ) => {
+      response.status(204).end()
     })
     .catch((error) => next(error))
 })
 
 app.post('/api/persons', (request, response, next) => {
-    const body = request.body
-    //const personsWithSameName = persons.filter(person => person.name && person.name.toLowerCase() === body.name.toLowerCase())
+  const body = request.body
+  //const personsWithSameName = persons.filter(person => person.name && person.name.toLowerCase() === body.name.toLowerCase())
 
-   /* if(personsWithSameName.length > 0) {
+  /* if(personsWithSameName.length > 0) {
         return response.status(400).json({
-            error: 'name must be unique' 
+            error: 'name must be unique'
             })
      }*/
-    /*if(!body.name){
+  /*if(!body.name){
         return response.status(400).json({
             error: 'name is missing'})
     }
@@ -118,17 +119,17 @@ app.post('/api/persons', (request, response, next) => {
             error: 'name is missing'
             })
         }*/
-       
-    const person = new Person({
-        name: body.name,
-        number: body.number
-      })
 
-    person.save().then((savedPerson) => {
-        response.json(savedPerson)
-    })
-        .catch(error => next(error))
+  const person = new Person({
+    name: body.name,
+    number: body.number
   })
+
+  person.save().then((savedPerson) => {
+    response.json(savedPerson)
+  })
+    .catch(error => next(error))
+})
 
 
 const unknownEndpoint = (request, response) => {

@@ -27,17 +27,17 @@ const person = new Person({
 })
 
 if(process.argv.length === 3){
-Person.find({}).then(result => {
+  Person.find({}).then(result => {
     console.log('phonebook:')
-  result.forEach(person => {
-    console.log(`${person.name} ${person.number}`)
+    result.forEach(person => {
+      console.log(`${person.name} ${person.number}`)
+    })
+    mongoose.connection.close()
   })
-  mongoose.connection.close()
-})
 }else{
 
-person.save().then(result => {
-  console.log(`added ${name} ${number} to phonebook`)
-  mongoose.connection.close()
-})
+  person.save().then(() => {
+    console.log(`added ${name} ${number} to phonebook`)
+    mongoose.connection.close()
+  })
 }
