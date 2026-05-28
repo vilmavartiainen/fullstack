@@ -4,20 +4,22 @@ const config = require('../utils/config')
 const logger = require('../utils/logger')
 const middleware = require('../utils/middleware')
 
-blogsRouter.get('/', (request, response) => {
-  Blog.find({}).then((blogs) => {
-    response.json(blogs)
-  })
+blogsRouter.get('/', async (request, response) => {
+  const blogs = await Blog.find({})
+  response.json(blogs)
 })
 
-blogsRouter.get('/:id', (request, response) => {
-  Blog.findById(request.params.id).then((blog) => {
+blogsRouter.get('/:id',async (request, response) => {
+  const blog = await Blog.findById (request.params.id)
+  if (blog) {
     response.json(blog)
-  })
+  } else {
+    response.status(404).end()
+  }
 })
 
 
-blogsRouter.post('/', (request, response, next) => {
+blogsRouter.post('/', async (request, response, next) => {
   const body = request.body
 
     const blog = new Blog({

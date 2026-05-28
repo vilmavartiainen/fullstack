@@ -2,8 +2,8 @@ POST http://localhost:3001/api/blogs
 Content-Type: application/json
 
 {
-    "title": "Elämäää",
+    "title": "Tämmöstä tänään",
     "author": "meitsi",
-    "url": "entiiä.fi",
+    "url": "entiiääää.fi",
     "likes": 67
 }

@@ -23,15 +23,6 @@ mongoose
     logger.error('error connection to MongoDB:', error.message)
   })
 
-/*const password = process.env.MONGODB_URI
-
-const url = `mongodb+srv://vilmaovartiainen:${password}@cluster0.jfxgrvb.mongodb.net/`
-
-mongoose.set('strictQuery', false)
-mongoose.connect(url)
-
-/*const mongoUrl = 'mongodb://localhost/bloglist'
-mongoose.connect(mongoUrl, { family: 4 })*/
 
 app.use(express.json())
 
