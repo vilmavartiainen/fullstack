@@ -62,6 +62,108 @@ test('all blogs are returned', async () => {
 
 })
 
+test('blogs id should be called id', async () => {
+    const response = await api.get('/api/blogs')
+    const blog = response.body[0]
+   
+    assert.notStrictEqual(blog.id, undefined) 
+})
+
+test('blogs can be added', async () => {
+    const newBlog = {
+        title: "Type wars",
+        author: "Robert C. Martin",
+        url: "http://blog.cleancoder.com/uncle-bob/2016/05/01/TypeWars.html",
+        likes: 2,
+    }
+
+    await api
+      .post('/api/blogs')
+      .send(newBlog)
+      .expect(200)  
+      .expect('Content-Type', /application\/json/)
+
+    const response = await api.get('/api/blogs')
+
+    assert.strictEqual(response.body.length, blogs.length + 1)
+
+    const blogsNames = response.body.map(blog => blog.title)
+    const isThereNewTitle = blogsNames.includes(newBlog.title)
+    assert.strictEqual(isThereNewTitle, true)
+
+})
+
+test('if likes have no value, value is zero', async () => {
+    const newBlog = {
+        title: "Type wars",
+        author: "Robert C. Martin",
+        url: "http://blog.cleancoder.com/uncle-bob/2016/05/01/TypeWars.html",
+    }
+
+    await api
+      .post('/api/blogs')
+      .send(newBlog)
+      .expect(200)  
+      .expect('Content-Type', /application\/json/)
+
+    const response = await api.get('/api/blogs')
+
+    const addedBlog = response.body[response.body.length - 1]
+
+    assert.strictEqual(addedBlog.likes, 0)
+})
+
+test('blog without title is not added', async () => {
+        const newBlog = {
+        author: "Robert C. Martin",
+        url: "http://blog.cleancoder.com/uncle-bob/2016/05/01/TypeWars.html",
+        likes: 6
+    }
+
+     await api
+      .post('/api/blogs')
+      .send(newBlog)
+      .expect(400)  
+
+    const response = await api.get('/api/blogs')
+    assert.strictEqual(response.body.length, blogs.length)
+
+})
+
+test('blog without url is not added', async () => {
+    const newBlog = {
+        title: "Type wars",
+        author: "Robert C. Martin",
+        likes: 6
+    }
+
+     await api
+      .post('/api/blogs')
+      .send(newBlog)
+      .expect(400)  
+
+    const response = await api.get('/api/blogs')
+    assert.strictEqual(response.body.length, blogs.length)
+})
+
+test('blogs can be deleted', async () =>{
+    const blogsAtStart = await api.get('/api/blogs')
+    const blogToDelete = blogsAtStart.body[0]
+
+    await api
+    .delete(`/api/blogs/${blogToDelete.id}`)
+    .expect(204)
+
+    const responseAtEnd = await api.get('/api/blogs')
+    const blogsAtEnd = responseAtEnd.body
+
+    const ids = blogsAtEnd.map(b => b.id)
+    assert(!ids.includes(blogToDelete.id))
+    
+    assert.strictEqual(blogsAtEnd.length, blogs.length - 1)
+
+})
+
 after(async () => {
   await mongoose.connection.close()
 })
