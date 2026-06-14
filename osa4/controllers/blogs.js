@@ -3,9 +3,11 @@ const Blog = require('../models/blogs')
 const config = require('../utils/config')
 const logger = require('../utils/logger')
 const middleware = require('../utils/middleware')
+const User = require('../models/users')
+
 
 blogsRouter.get('/', async (request, response) => {
-  const blogs = await Blog.find({})
+  const blogs = await Blog.find({}).populate('user', { username: 1, name: 1 })
   response.json(blogs)
 })
 
@@ -22,6 +24,12 @@ blogsRouter.get('/:id',async (request, response) => {
 blogsRouter.post('/', async (request, response, next) => {
   const body = request.body
 
+  const user = await User.findById(body.userId)
+
+  if (!user) {
+    return response.status(400).json({ error: 'UserId missing or not valid' })
+  }
+
   if (body.likes === undefined){
     body.likes = 0
   }
@@ -31,15 +39,18 @@ blogsRouter.post('/', async (request, response, next) => {
   }
 
     const blog = new Blog({
+        url: body.url,
         title: body.title,
         author: body.author,
-        url: body.url,
-        likes: body.likes
+        likes: body.likes,
+        user: user._id
 
     })
 
     const savedBlog = await blog.save()
-    response.status(200).json(savedBlog)
+    user.blogs = user.blogs.concat(savedBlog._id)
+    await user.save()
+    response.status(201).json(savedBlog)
 })
 
 blogsRouter.put('/:id', (request, response) => {
