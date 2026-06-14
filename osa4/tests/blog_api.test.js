@@ -1,49 +1,28 @@
-const { test, after, beforeEach } = require('node:test')
+const { test, after, beforeEach, describe } = require('node:test')
 const mongoose = require('mongoose')
 const supertest = require('supertest')
 const app = require('../app')
 const assert = require('node:assert')
 const Blog = require('../models/blogs')
+const bcrypt = require('bcrypt')
+const User = require('../models/users')
+const helper = require('./test_helper')
 
 
 
 
 const api = supertest(app)
 
-const blogs = [
-      {
-    _id: "5a422a851b54a676234d17f7",
-    title: "React patterns",
-    author: "Michael Chan",
-    url: "https://reactpatterns.com/",
-    likes: 7,
-    __v: 0
-  },
-  {
-    _id: "5a422aa71b54a676234d17f8",
-    title: "Go To Statement Considered Harmful",
-    author: "Edsger W. Dijkstra",
-    url: "http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html",
-    likes: 5,
-    __v: 0
-  },
-  {
-    _id: "5a422b3a1b54a676234d17f9",
-    title: "Canonical string reduction",
-    author: "Edsger W. Dijkstra",
-    url: "http://www.cs.utexas.edu/~EWD/transcriptions/EWD08xx/EWD808.html",
-    likes: 12,
-    __v: 0
-  }
-]
-
 beforeEach(async () => {
   await Blog.deleteMany({})
-  let blogObject = new Blog(blogs[0])
+
+  let blogObject = new Blog(helper.initialBlogs[0])
   await blogObject.save()
-  blogObject = new Blog(blogs[1])
+
+  blogObject = new Blog(helper.initialBlogs[1])
   await blogObject.save()
-  blogObject = new Blog(blogs[2])   
+
+  blogObject = new Blog(helper.initialBlogs[2])   
   await blogObject.save()
 })
 
@@ -58,7 +37,7 @@ test('blogs are returned as json', async () => {
 test('all blogs are returned', async () => {
   const response = await api.get('/api/blogs')
 
-  assert.deepStrictEqual(response.body.length, blogs.length)
+  assert.deepStrictEqual(response.body.length, helper.initialBlogs.length)
 
 })
 
@@ -85,7 +64,7 @@ test('blogs can be added', async () => {
 
     const response = await api.get('/api/blogs')
 
-    assert.strictEqual(response.body.length, blogs.length + 1)
+    assert.strictEqual(response.body.length, helper.initialBlogs.length + 1)
 
     const blogsNames = response.body.map(blog => blog.title)
     const isThereNewTitle = blogsNames.includes(newBlog.title)
@@ -126,7 +105,7 @@ test('blog without title is not added', async () => {
       .expect(400)  
 
     const response = await api.get('/api/blogs')
-    assert.strictEqual(response.body.length, blogs.length)
+    assert.strictEqual(response.body.length, helper.initialBlogs.length)
 
 })
 
@@ -143,7 +122,7 @@ test('blog without url is not added', async () => {
       .expect(400)  
 
     const response = await api.get('/api/blogs')
-    assert.strictEqual(response.body.length, blogs.length)
+    assert.strictEqual(response.body.length, helper.initialBlogs.length)
 })
 
 test('blogs can be deleted', async () =>{
@@ -160,7 +139,60 @@ test('blogs can be deleted', async () =>{
     const ids = blogsAtEnd.map(b => b.id)
     assert(!ids.includes(blogToDelete.id))
     
-    assert.strictEqual(blogsAtEnd.length, blogs.length - 1)
+    assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length - 1)
+
+})
+
+describe('when there is initially one user in db', () => {
+  beforeEach(async () => {
+    await User.deleteMany({})
+
+    const passwordHash = await bcrypt.hash('sekret', 10)
+    const user = new User({ username: 'muumi', passwordHash })
+
+    await user.save()
+  })
+
+  test('creation succeeds with a fresh username', async () => {
+    const usersAtStart = await helper.usersInDb()
+
+    const newUser = {
+      username: 'vilmis',
+      name: 'Vilma Vartiainen',
+      password: 'salainen'
+    }
+    await api
+    .post('/api/users')
+    .send(newUser)
+    .expect(201)
+    .expect('Content-Type', /application\/json/)
+
+    const usersAtEnd = await helper.usersInDb()
+    assert.strictEqual(usersAtEnd.length, usersAtStart.length + 1)
+
+    const usernames = usersAtEnd.map(u => u.username)
+    assert(usernames.includes(newUser.username))  
+})
+
+  test('creatio fails with proper statuscode and message if username is already taken', async()=>{
+    const usersAtStart = await helper.usersInDb()
+    const newUser = {
+      username: 'muumi',
+      name: 'muumipeikko',
+      password: 'salainen'
+  }
+    const result = await api
+      .post('/api/users')
+      .send(newUser)
+      .expect(400)
+      .expect('Content-Type', /application\/json/)
+
+      const userAtend = await helper.usersInDb()
+      assert(result.body.error.includes('expected `username` to be unique'))
+
+      assert.strictEqual(userAtend.length, usersAtStart.length)
+
+  })
 
 })
 
