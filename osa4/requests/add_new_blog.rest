@@ -1,10 +1,10 @@
 POST http://localhost:3001/api/blogs
 Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InZpbG1pcyIsImlkIjoiNmEyZTVhNDQ0MzQzMjBlZDA1MGViZTUwIiwiaWF0IjoxNzgxNDI0NjcyfQ.VuoOak0UyN4DIDYULgDvuQYQXued1UQghHmGI1-zdcw
 
 {
-    "title": "Tämmöstä tänään",
+    "title": "Tämmöstä tänään taas",
     "author": "meitsi",
     "url": "entiiääää.fi",
-    "likes": 67,
-    "userId":"6a26cf2c199eba79b9aadff1"
+    "likes": 67
 }
