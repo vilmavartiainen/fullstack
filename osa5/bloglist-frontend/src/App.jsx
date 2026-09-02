@@ -5,6 +5,10 @@ import loginService from './services/login'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
+  const [newBlog, setNewBlog] = useState('')
+  const [newTitle, setNewTitle] = useState('')
+  const [newAuthor, setNewAuthor] = useState('')
+  const [newUrl, setNewUrl] = useState('')
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
@@ -24,6 +28,40 @@ const App = () => {
     blogService.setToken(user.token)
     }
   }, [])
+
+   /* const handleBlogChange = (event) => {
+    setNewBlog(event.target.value)
+    console.log('uusi blogi postaus')
+  }*/
+
+  const handleTitleChange = (event) => {
+    setNewTitle(event.target.value)
+  }
+
+  const handleAuthorChange = (event) => {
+    setNewAuthor(event.target.value)
+  }
+
+  const handleUrlChange = (event) => {
+    setNewUrl(event.target.value)
+  }
+  const addBlog = event => {
+    event.preventDefault()
+    const blogObject = {
+      title: newTitle,
+      author: newAuthor,
+      url: newUrl
+    }
+    blogService
+      .create(blogObject)
+      .then(returnedblog => {
+        setBlogs(blogs.concat(returnedblog))
+        setNewBlog('')
+        setNewTitle('')
+        setNewAuthor('')
+        setNewUrl('')
+      })
+  }
 
     const handleLogin = async event => {
     event.preventDefault()
@@ -72,7 +110,7 @@ const App = () => {
     </form>
   )
 
-  const handleLogout = async => {
+  const handleLogout = () => {
     window.localStorage.removeItem('loggedBlogAppUser')
     setUser(null)
   }
@@ -80,12 +118,24 @@ const App = () => {
 
 
 
- /*const blogForm = () => (
+ const blogForm = () => (
       <form onSubmit={addBlog}>
-      <input value={newBlog} onChange={handleBlogChange} />
-      <button type="submit">save</button>
+      <h1>create new</h1>
+      <div>
+      <div>
+        title: <input value={newTitle} onChange={handleTitleChange} />
+      </div>
+      <div>
+        author: <input value={newAuthor} onChange={handleAuthorChange}/>
+      </div>
+      <div>
+        url: <input value={newUrl} onChange={handleUrlChange}/>
+      </div>
+      <button type="submit">create</button>
+      </div>
     </form>
-  )*/
+  )
+
 
   return (
     <div>
@@ -103,9 +153,11 @@ const App = () => {
         {blogs.map(blog =>
         <Blog key={blog.id} blog={blog} />
       )}
+        
+        {blogForm()}
         <p>{user.name} logged in</p>
-        {/*{blogForm()}*/}
         <button onClick={handleLogout}>logout</button>
+
       </div>
       )}
     </div> 
