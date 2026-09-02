@@ -3,9 +3,32 @@ import Blog from './components/Blog'
 import blogService from './services/blogs'
 import loginService from './services/login'
 
+
+ const Notification = ({message}) => {
+    if (message === null){
+      return null
+    }
+    return(
+      <div className='newBlog'>
+        {message}
+      </div>
+    )
+  }
+
+  const ErrorNotification = ({message}) => {
+    if (message === null){
+      return null
+    }
+    return(
+      <div className='error'>
+        {message}
+      </div>
+    )
+  }
+
 const App = () => {
   const [blogs, setBlogs] = useState([])
-  const [newBlog, setNewBlog] = useState('')
+ // const [newBlog, setNewBlog] = useState('')
   const [newTitle, setNewTitle] = useState('')
   const [newAuthor, setNewAuthor] = useState('')
   const [newUrl, setNewUrl] = useState('')
@@ -13,6 +36,7 @@ const App = () => {
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
   const [errorMessage, setErrorMessage] = useState(null)
+  const [blogMessage, setBlogMessage] = useState(null)
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
@@ -33,6 +57,7 @@ const App = () => {
     setNewBlog(event.target.value)
     console.log('uusi blogi postaus')
   }*/
+
 
   const handleTitleChange = (event) => {
     setNewTitle(event.target.value)
@@ -56,10 +81,14 @@ const App = () => {
       .create(blogObject)
       .then(returnedblog => {
         setBlogs(blogs.concat(returnedblog))
-        setNewBlog('')
+        //setNewBlog('')
         setNewTitle('')
         setNewAuthor('')
         setNewUrl('')
+        setBlogMessage(`a new blog '${newTitle}' by '${newAuthor}' added`)
+        setTimeout(() => {
+          setBlogMessage(null)
+        }, 5000)
       })
   }
 
@@ -76,7 +105,7 @@ const App = () => {
       setUsername('')
       setPassword('')
     } catch (exception){
-      setErrorMessage('wrong credentials')
+      setErrorMessage('wrong username or password')
       setTimeout(() => {
         setErrorMessage(null)
       }, 5000)
@@ -139,11 +168,20 @@ const App = () => {
 
   return (
     <div>
-  
-    
+      {blogMessage && (
+        <div className='newBlog'>
+          {blogMessage}
+          </div>
+      )}
       {!user && ( 
         <div>
+          
           <h1>login</h1>
+          {errorMessage && (
+        <div className='error'>
+          {errorMessage}
+          </div>
+      )}
             {loginForm()} 
         </div>
         )}
