@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import Blog from './components/Blog'
 import blogService from './services/blogs'
 import loginService from './services/login'
+import BlogForm from './components/BlogForm'
 
 
  const Notification = ({message}) => {
@@ -37,6 +38,7 @@ const App = () => {
   const [user, setUser] = useState(null)
   const [errorMessage, setErrorMessage] = useState(null)
   const [blogMessage, setBlogMessage] = useState(null)
+  const [createVisible, setCreatingVisible] = useState(false)
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
@@ -139,6 +141,31 @@ const App = () => {
     </form>
   )
 
+  const blogForm = () => {
+    const hideWhenVisible = { display: createVisible ? 'none' : '' }
+    const showWhenVisible = { display: createVisible ? '' : 'none' }
+
+    return(
+      <div>
+        <div style={hideWhenVisible}>
+          <button onClick={() => setCreatingVisible(true)}>create new blog</button>
+        </div>
+        <div style={showWhenVisible}>
+          <BlogForm
+          newTitle={newTitle}
+          newAuthor={newAuthor}
+          newUrl={newUrl}
+          addBlog={addBlog}
+          handleTitleChange={({target}) => setNewTitle(target.value)}
+          handleAuthorChange={({target})=> setNewAuthor(target.value)}
+          handleUrlChange={({target})=>setNewUrl(target.value)}
+          />
+          <button onClick={() => setCreatingVisible(false)}>cancel</button>
+        </div>
+      </div>
+    )
+  }
+  
   const handleLogout = () => {
     window.localStorage.removeItem('loggedBlogAppUser')
     setUser(null)
@@ -147,23 +174,7 @@ const App = () => {
 
 
 
- const blogForm = () => (
-      <form onSubmit={addBlog}>
-      <h1>create new</h1>
-      <div>
-      <div>
-        title: <input value={newTitle} onChange={handleTitleChange} />
-      </div>
-      <div>
-        author: <input value={newAuthor} onChange={handleAuthorChange}/>
-      </div>
-      <div>
-        url: <input value={newUrl} onChange={handleUrlChange}/>
-      </div>
-      <button type="submit">create</button>
-      </div>
-    </form>
-  )
+ 
 
 
   return (
@@ -188,13 +199,13 @@ const App = () => {
       {user && (
       <div>
         <h1>blogs</h1>
+        <p>{user.name} logged in</p>
+        <button onClick={handleLogout}>logout</button>
         {blogs.map(blog =>
         <Blog key={blog.id} blog={blog} />
       )}
         
         {blogForm()}
-        <p>{user.name} logged in</p>
-        <button onClick={handleLogout}>logout</button>
 
       </div>
       )}
