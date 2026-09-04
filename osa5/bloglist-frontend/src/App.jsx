@@ -3,29 +3,8 @@ import Blog from './components/Blog'
 import blogService from './services/blogs'
 import loginService from './services/login'
 import BlogForm from './components/BlogForm'
+import Notification from './components/Notifications'
 
-
- const Notification = ({message}) => {
-    if (message === null){
-      return null
-    }
-    return(
-      <div className='newBlog'>
-        {message}
-      </div>
-    )
-  }
-
-  const ErrorNotification = ({message}) => {
-    if (message === null){
-      return null
-    }
-    return(
-      <div className='error'>
-        {message}
-      </div>
-    )
-  }
 
 const App = () => {
   const [username, setUsername] = useState('')

@@ -20,7 +20,8 @@ const BlogForm = ({createBlog}) => {
   
     const addBlog = event => {
       event.preventDefault()
-        createBlog({
+      //kutsuu apilta saatua funktiota ja antaa sille valmiin olion
+        createBlog({ 
         title: newTitle,
         author: newAuthor,
         url: newUrl
