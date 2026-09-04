@@ -28,17 +28,13 @@ import BlogForm from './components/BlogForm'
   }
 
 const App = () => {
-  const [blogs, setBlogs] = useState([])
- // const [newBlog, setNewBlog] = useState('')
-  const [newTitle, setNewTitle] = useState('')
-  const [newAuthor, setNewAuthor] = useState('')
-  const [newUrl, setNewUrl] = useState('')
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
   const [errorMessage, setErrorMessage] = useState(null)
   const [blogMessage, setBlogMessage] = useState(null)
   const [createVisible, setCreatingVisible] = useState(false)
+  const [blogs, setBlogs] = useState([])
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
@@ -55,49 +51,27 @@ const App = () => {
     }
   }, [])
 
-   /* const handleBlogChange = (event) => {
-    setNewBlog(event.target.value)
-    console.log('uusi blogi postaus')
-  }*/
-
-
-  const handleTitleChange = (event) => {
-    setNewTitle(event.target.value)
+//addBlog funktio ottaa vastaan valmiin blogiOlion blogForm komponentilta ja lisää sen blogien listaan
+  const addBlog = (blogObject) => {
+      blogService
+        .create(blogObject)
+        .then(returnedblog => {
+          setBlogs(blogs.concat(returnedblog))
+          setBlogMessage(`a new blog '${blogObject.title}' by '${blogObject.author}' added`)
+          setTimeout(() => {
+            setBlogMessage(null)
+          }, 5000)
+        })
+    
   }
 
-  const handleAuthorChange = (event) => {
-    setNewAuthor(event.target.value)
-  }
 
-  const handleUrlChange = (event) => {
-    setNewUrl(event.target.value)
-  }
-  const addBlog = event => {
-    event.preventDefault()
-    const blogObject = {
-      title: newTitle,
-      author: newAuthor,
-      url: newUrl
-    }
-    blogService
-      .create(blogObject)
-      .then(returnedblog => {
-        setBlogs(blogs.concat(returnedblog))
-        //setNewBlog('')
-        setNewTitle('')
-        setNewAuthor('')
-        setNewUrl('')
-        setBlogMessage(`a new blog '${newTitle}' by '${newAuthor}' added`)
-        setTimeout(() => {
-          setBlogMessage(null)
-        }, 5000)
-      })
-  }
-
-    const handleLogin = async event => {
+  //sisäänkirjautuminen  
+  const handleLogin = async event => {
     event.preventDefault()
     
     try {
+      //käyttäjätunnuksen ja salasanan lähettäminen backille
       const user = await loginService.login({ username, password })
 
       window.localStorage.setItem('loggedBlogAppUser', JSON.stringify(user))
@@ -106,7 +80,7 @@ const App = () => {
       setUser(user)
       setUsername('')
       setPassword('')
-    } catch (exception){
+    } catch (exception){ //jos salasana tai käyttäjätunnus väärä annetaan virheilmoitus
       setErrorMessage('wrong username or password')
       setTimeout(() => {
         setErrorMessage(null)
@@ -151,15 +125,7 @@ const App = () => {
           <button onClick={() => setCreatingVisible(true)}>create new blog</button>
         </div>
         <div style={showWhenVisible}>
-          <BlogForm
-          newTitle={newTitle}
-          newAuthor={newAuthor}
-          newUrl={newUrl}
-          addBlog={addBlog}
-          handleTitleChange={({target}) => setNewTitle(target.value)}
-          handleAuthorChange={({target})=> setNewAuthor(target.value)}
-          handleUrlChange={({target})=>setNewUrl(target.value)}
-          />
+          <BlogForm createBlog={addBlog} />
           <button onClick={() => setCreatingVisible(false)}>cancel</button>
         </div>
       </div>
