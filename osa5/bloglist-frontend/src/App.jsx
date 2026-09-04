@@ -1,9 +1,9 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect} from 'react'
 import Blog from './components/Blog'
 import blogService from './services/blogs'
 import loginService from './services/login'
 import BlogForm from './components/BlogForm'
-import Notification from './components/Notifications'
+//import Notification from './components/Notifications'
 
 
 const App = () => {
@@ -29,6 +29,7 @@ const App = () => {
     blogService.setToken(user.token)
     }
   }, [])
+
 
 //addBlog funktio ottaa vastaan valmiin blogiOlion blogForm komponentilta ja lisää sen blogien listaan
   const addBlog = (blogObject) => {
