@@ -1,6 +1,6 @@
 import { useState } from "react"
 
-const Blog = ({ blog }) => {
+const Blog = ({ blog, handleLikes }) => {
 
 const [infoVisible, setInfoVisible]= useState(false)
 
@@ -27,7 +27,7 @@ return(
       <button onClick={()=> setInfoVisible(false)}>hide</button> {/*Painalluksella tila muuttuu falseksi ja hide nappula ja lisätiedot poistuvat ruudulta ja palataan edelliseen tilaan jossa näkyy vain view nappula ja title ja author*/}
       <div>{blog.url}</div>  
       <div>likes  {blog.likes}
-        <button>like</button>
+        <button onClick={() => handleLikes(blog.id)}>like</button> 
       </div>
       <div> {blog.user.name} </div>
     </div>

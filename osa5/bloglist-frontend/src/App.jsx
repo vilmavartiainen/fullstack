@@ -14,6 +14,7 @@ const App = () => {
   const [blogMessage, setBlogMessage] = useState(null)
   const [createVisible, setCreatingVisible] = useState(false)
   const [blogs, setBlogs] = useState([])
+  
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
@@ -29,6 +30,29 @@ const App = () => {
     blogService.setToken(user.token)
     }
   }, [])
+
+  //tykkäysten käsittely
+  const handleLikes = (id) => {
+    const blog = blogs.find (b => b.id === id)
+    const changedLikes = {...blog, likes: blog.likes +1, user: blog.user.id} 
+
+    blogService
+      .update(id, changedLikes)
+      .then(returnedBlog => {
+        const fixedLikesBlog = {
+          ...returnedBlog, 
+          user: blog.user
+        }
+        setBlogs(blogs.map(blog => blog.id !== id ? blog : fixedLikesBlog))
+    })
+      .catch(error => {
+        console.error('tykkäys epäonnistui', error)
+        setErrorMessage('Tykkäyksen lisääminen epäonnistui')
+        setTimeout(() => {
+          setErrorMessage(null)
+        }, 5000)
+      })
+  }
 
 
 //addBlog funktio ottaa vastaan valmiin blogiOlion blogForm komponentilta ja lisää sen blogien listaan
@@ -117,11 +141,12 @@ const App = () => {
     setUser(null)
   }
 
-
-
+  //kopioidaan blogi taulukko, joka järjestetään tykkäysten perusteella sortilla.
+  const sortedBlogs = [...blogs]
+  sortedBlogs.sort((a,b) => b.likes - a.likes);
+  console.log('blogien liket järjstettynä' , sortedBlogs.map(blog => blog.likes));
 
  
-
 
   return (
     <div>
@@ -147,8 +172,8 @@ const App = () => {
         <h1>blogs</h1>
         <p>{user.name} logged in</p>
         <button onClick={handleLogout}>logout</button>
-        {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} />
+        {sortedBlogs.map(blog =>
+        <Blog key={blog.id} blog={blog} handleLikes={handleLikes} />
       )}
         
         {blogForm()}
