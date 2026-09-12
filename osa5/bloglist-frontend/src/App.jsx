@@ -31,6 +31,28 @@ const App = () => {
     }
   }, [])
 
+  //Blogien poistaminen
+  const handleRemoval = (id) => {
+  console.log("poistamista painettu")
+
+  const deletedBlog = blogs.find((b => b.id === id))
+  if (window.confirm(`Remove blog '${deletedBlog.title}' 'by' '${deletedBlog.author}'`)){
+    
+    blogService
+      .deleteBlog(id)
+      .then(() => {
+        setBlogs(blogs.filter(b => b.id !== id))
+      })
+      .catch(error => {
+        console.error('poistaminen epäonnistui', error)
+        setErrorMessage('Poistaminen epäonnistui')
+        setTimeout(() => {
+          setErrorMessage(null)
+        }, 5000)
+      })
+    }
+  }
+
   //tykkäysten käsittely
   const handleLikes = (id) => {
     const blog = blogs.find (b => b.id === id)
@@ -55,12 +77,18 @@ const App = () => {
   }
 
 
+
 //addBlog funktio ottaa vastaan valmiin blogiOlion blogForm komponentilta ja lisää sen blogien listaan
   const addBlog = (blogObject) => {
       blogService
         .create(blogObject)
         .then(returnedblog => {
-          setBlogs(blogs.concat(returnedblog))
+  //liitetään appin muistissa oleva kirjautunut käyttäjä blogiin, jotta poisto nappi saadaan näkyviin ilman päivitystä
+        const blogWithLoggedUser = {
+          ...returnedblog,
+          user: user
+        }
+          setBlogs(blogs.concat(blogWithLoggedUser))
           setBlogMessage(`a new blog '${blogObject.title}' by '${blogObject.author}' added`)
           setTimeout(() => {
             setBlogMessage(null)
@@ -173,7 +201,7 @@ const App = () => {
         <p>{user.name} logged in</p>
         <button onClick={handleLogout}>logout</button>
         {sortedBlogs.map(blog =>
-        <Blog key={blog.id} blog={blog} handleLikes={handleLikes} />
+        <Blog key={blog.id} blog={blog} handleLikes={handleLikes} handleRemoval={handleRemoval} user={user}/>
       )}
         
         {blogForm()}

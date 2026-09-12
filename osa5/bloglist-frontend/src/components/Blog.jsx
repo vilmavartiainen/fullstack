@@ -1,12 +1,20 @@
 import { useState } from "react"
 
-const Blog = ({ blog, handleLikes }) => {
+const Blog = ({ blog, handleLikes, handleRemoval, user}) => {
 
 const [infoVisible, setInfoVisible]= useState(false)
 
 
 const hideWhenVisible = { display: infoVisible ? 'none' : '' } 
 const showWhenVisible = { display: infoVisible ? '' : 'none' }
+
+const shwowDelete = () => {
+if (blog.user && blog.user.username === user.username){ //tarkistus onko blogin tekijä sama kuin kirjautunut käyttäjä
+ return {display: '' }
+} else {
+  return {display: 'none'}
+  }
+} 
 
 const blogStyle = {
     paddingTop: 10,
@@ -30,6 +38,7 @@ return(
         <button onClick={() => handleLikes(blog.id)}>like</button> 
       </div>
       <div> {blog.user.name} </div>
+      <button style={shwowDelete()} onClick={() => handleRemoval(blog.id)}>delete</button>
     </div>
   </div>  
 )
