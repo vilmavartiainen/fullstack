@@ -88,6 +88,7 @@ const App = () => {
           ...returnedblog,
           user: user
         }
+        setCreatingVisible(false)
         setBlogs(blogs.concat(blogWithLoggedUser))
         setBlogMessage(`a new blog '${blogObject.title}' by '${blogObject.author}' added`)
         setTimeout(() => {
