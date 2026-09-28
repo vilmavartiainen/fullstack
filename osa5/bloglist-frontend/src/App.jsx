@@ -186,7 +186,6 @@ const App = () => {
       )}
       {!user && (
         <div>
-
           <h1>login</h1>
           {errorMessage && (
             <div className='error'>
