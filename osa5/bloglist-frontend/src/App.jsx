@@ -5,6 +5,13 @@ import loginService from './services/login'
 import BlogForm from './components/BlogForm'
 //import Notification from './components/Notifications'
 
+import {BrowserRouter as Router,
+  Routes, Route, Link
+} from 'react-router-dom'
+import BlogPage from './components/BlogPage'
+import LoginPage from './components/LoginPage'
+
+
 
 const App = () => {
   const [username, setUsername] = useState('')
@@ -36,7 +43,7 @@ const App = () => {
     console.log('poistamista painettu')
 
     const deletedBlog = blogs.find((b => b.id === id))
-    if (window.confirm(`Remove blog '${deletedBlog.title}' 'by' '${deletedBlog.author}'`)){
+    if (window.confirm(`Remove blog ${deletedBlog.title} by ${deletedBlog.author}`)){
 
       blogService
         .deleteBlog(id)
@@ -90,7 +97,7 @@ const App = () => {
         }
         setCreatingVisible(false)
         setBlogs(blogs.concat(blogWithLoggedUser))
-        setBlogMessage(`a new blog '${blogObject.title}' by '${blogObject.author}' added`)
+        setBlogMessage(`a new blog ${blogObject.title} by ${blogObject.author} added`)
         setTimeout(() => {
           setBlogMessage(null)
         }, 5000)
@@ -175,39 +182,41 @@ const App = () => {
   sortedBlogs.sort((a,b) => b.likes - a.likes)
   console.log('blogien liket järjstettynä' , sortedBlogs.map(blog => blog.likes))
 
-
+  const padding = {padding: 5}
 
   return (
     <div>
+      <div>
+        <Link style={padding} to="blogs">blogs</Link>
+        <Link style={padding} to="login">login</Link>
+      </div>
+
+      <Routes>
+        <Route path="/blogs" element={<BlogPage 
+          blogForm={blogForm}
+          user={user}
+          sortedBlogs={sortedBlogs}
+          handleLogout={handleLogout}
+          handleLikes={handleLikes}
+          handleRemoval={handleRemoval}
+         />} />
+         <Route path="/login" element={<LoginPage 
+         loginform={loginForm}
+         user={user}
+         />} />
+      </Routes>
+
+
       {blogMessage && (
         <div className='newBlog'>
           {blogMessage}
         </div>
       )}
-      {!user && (
-        <div>
-          <h1>login</h1>
           {errorMessage && (
             <div className='error'>
               {errorMessage}
             </div>
           )}
-          {loginForm()}
-        </div>
-      )}
-      {user && (
-        <div>
-          <h1>blogs</h1>
-          <p>{user.name} logged in</p>
-          <button onClick={handleLogout}>logout</button>
-          {sortedBlogs.map(blog =>
-            <Blog key={blog.id} blog={blog} handleLikes={handleLikes} handleRemoval={handleRemoval} user={user}/>
-          )}
-
-          {blogForm()}
-
-        </div>
-      )}
     </div>
   )
 }
