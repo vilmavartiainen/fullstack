@@ -1,18 +1,18 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import loginService from '../services/login'
 import blogService from '../services/blogs'
 import { useNavigate } from 'react-router-dom'
 
 
-const LoginPage = ({user, setUser}) => {
+const LoginPage = ({ user, setUser, setErrorMessage }) => {
 
-    const [username, setUsername] = useState('')
-    const [password, setPassword] = useState('')
-    const [errorMessage, setErrorMessage] = useState(null)
+  const [username, setUsername] = useState('')
+  const [password, setPassword] = useState('')
+  //const [setErrorMessage] = useState(null)
 
-    const navigate = useNavigate()
+  const navigate = useNavigate()
 
-const loginForm = () => (
+  const loginForm = () => (
     <form onSubmit={handleLogin}>
       <div>
         <label>
@@ -42,7 +42,7 @@ const loginForm = () => (
   const handleLogin = async event => {
     event.preventDefault()
 
-  
+
 
     try {
       //käyttäjätunnuksen ja salasanan lähettäminen backille
@@ -66,16 +66,16 @@ const loginForm = () => (
 
 
 
-    return (
-     <div>
-        {!user && (
-     <div>
-        <h1>login</h1>
-        {loginForm()}
+  return (
+    <div>
+      {!user && (
+        <div>
+          <h1>login</h1>
+          {loginForm()}
         </div>
-            )}
+      )}
     </div>
-    )
+  )
 }
 
 export default LoginPage

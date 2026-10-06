@@ -16,16 +16,12 @@ export default [
         sourceType: 'module'
       }
     },
-      files: ['**/*.test.{js,jsx}'],
-      languageOptions: {
-        globals: {
-          ...globals.vitest}
-        },
 
     plugins: {
       'react-hooks': reactHooks,
       'react-refresh': reactRefresh
     },
+
     rules: {
       ...js.configs.recommended.rules,
       ...reactHooks.configs.recommended.rules,
@@ -43,6 +39,15 @@ export default [
       'object-curly-spacing': ['error', 'always'],
       'arrow-spacing': ['error', { before: true, after: true }],
       'no-console': 'off'
+    }
+  },
+
+  {
+    files: ['**/*.test.{js,jsx}'],
+    languageOptions: {
+      globals: {
+        ...globals.vitest
+      }
     }
   }
 ]

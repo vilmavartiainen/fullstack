@@ -71,11 +71,6 @@ describe('Blog app', () => {
     await expect(page.getByText('testi')).toHaveCount(0)
   })
 
-  /*test('delete button is shown to user', async ({page}) => {
-    await createBlog(page, 'testi', 'jaska', 'jaska.fi')
-    await page.getBy('button', { name: 'view' }).click()
-  }) */
-
 })
 
 
