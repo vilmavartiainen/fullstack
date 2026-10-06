@@ -60,6 +60,7 @@ const App = () => {
         setTimeout(() => {
           setBlogMessage(null)
         }, 5000)
+        navigate('/')
       })
 
   }
@@ -165,6 +166,8 @@ const App = () => {
         {!user && (
         <Link style={padding} to="login">login</Link>
         )}
+
+        <Link style={padding} to="/create">new blog</Link>
       </div>
 
       <Routes>
@@ -192,6 +195,8 @@ const App = () => {
           user={user}
           />
         } />
+        <Route path="/create" element={<BlogForm createBlog={addBlog}/>}
+        />
       </Routes>
 
 
