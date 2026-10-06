@@ -1,23 +1,37 @@
 import Blog from './Blog'
+import { Link } from "react-router-dom";
 
 const BlogPage = ({ blogForm, user, sortedBlogs, handleLogout, handleLikes, handleRemoval}) => {
-     return (
+
+ return (
+        <div>
+            <h2>blogs</h2>
+
+            <ul>
+                {sortedBlogs.map((blog) => (
+                    <div key={blog.id}>
+                        <Link to={`/${blog.id}`}>
+                            {blog.title} {blog.author}
+                        </Link>
+                    </div>
+                ))}
+            </ul>
+        </div>
+    );
+     /*return (
       <div>
-      {user && (
+        
         <div>
           <h1>blogs</h1>
-          <p>{user.name} logged in</p>
-          <button onClick={handleLogout}>logout</button>
           {sortedBlogs.map(blog =>
             <Blog key={blog.id} blog={blog} handleLikes={handleLikes} handleRemoval={handleRemoval} user={user}/>
           )}
 
-          {blogForm()}
+          {user && blogForm()}
 
         </div>
-      )}
     </div>
-  )
+  )*/
 }
 
 export default BlogPage

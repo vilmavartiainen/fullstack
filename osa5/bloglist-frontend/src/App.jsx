@@ -4,9 +4,10 @@ import blogService from './services/blogs'
 import loginService from './services/login'
 import BlogForm from './components/BlogForm'
 //import Notification from './components/Notifications'
+import { useNavigate } from 'react-router-dom'
 
 import {BrowserRouter as Router,
-  Routes, Route, Link
+  Routes, Route, Link, useMatch
 } from 'react-router-dom'
 import BlogPage from './components/BlogPage'
 import LoginPage from './components/LoginPage'
@@ -14,13 +15,14 @@ import LoginPage from './components/LoginPage'
 
 
 const App = () => {
-  const [username, setUsername] = useState('')
-  const [password, setPassword] = useState('')
+  
   const [user, setUser] = useState(null)
   const [errorMessage, setErrorMessage] = useState(null)
   const [blogMessage, setBlogMessage] = useState(null)
   const [createVisible, setCreatingVisible] = useState(false)
   const [blogs, setBlogs] = useState([])
+
+  const navigate = useNavigate()
 
 
   useEffect(() => {
@@ -38,50 +40,7 @@ const App = () => {
     }
   }, [])
 
-  //Blogien poistaminen
-  const handleRemoval = (id) => {
-    console.log('poistamista painettu')
-
-    const deletedBlog = blogs.find((b => b.id === id))
-    if (window.confirm(`Remove blog ${deletedBlog.title} by ${deletedBlog.author}`)){
-
-      blogService
-        .deleteBlog(id)
-        .then(() => {
-          setBlogs(blogs.filter(b => b.id !== id))
-        })
-        .catch(error => {
-          console.error('poistaminen epäonnistui', error)
-          setErrorMessage('Poistaminen epäonnistui')
-          setTimeout(() => {
-            setErrorMessage(null)
-          }, 5000)
-        })
-    }
-  }
-
-  //tykkäysten käsittely
-  const handleLikes = (id) => {
-    const blog = blogs.find (b => b.id === id)
-    const changedLikes = { ...blog, likes: blog.likes +1, user: blog.user.id }
-
-    blogService
-      .update(id, changedLikes)
-      .then(returnedBlog => {
-        const fixedLikesBlog = {
-          ...returnedBlog,
-          user: blog.user
-        }
-        setBlogs(blogs.map(blog => blog.id !== id ? blog : fixedLikesBlog))
-      })
-      .catch(error => {
-        console.error('tykkäys epäonnistui', error)
-        setErrorMessage('Tykkäyksen lisääminen epäonnistui')
-        setTimeout(() => {
-          setErrorMessage(null)
-        }, 5000)
-      })
-  }
+  
 
 
 
@@ -106,54 +65,7 @@ const App = () => {
   }
 
 
-  //sisäänkirjautuminen
-  const handleLogin = async event => {
-    event.preventDefault()
-
-    try {
-      //käyttäjätunnuksen ja salasanan lähettäminen backille
-      const user = await loginService.login({ username, password })
-
-      window.localStorage.setItem('loggedBlogAppUser', JSON.stringify(user))
-
-      blogService.setToken(user.token)
-      setUser(user)
-      setUsername('')
-      setPassword('')
-    } catch { //jos salasana tai käyttäjätunnus väärä annetaan virheilmoitus
-      setErrorMessage('wrong username or password')
-      setTimeout(() => {
-        setErrorMessage(null)
-      }, 5000)
-    }
-    console.log('logging in with', username, password)
-  }
-
-  const loginForm = () => (
-    <form onSubmit={handleLogin}>
-      <div>
-        <label>
-          username
-          <input
-            type="text"
-            value={username}
-            onChange={({ target }) => setUsername(target.value)}
-          />
-        </label>
-      </div>
-      <div>
-        <label>
-          password
-          <input
-            type="password"
-            value={password}
-            onChange={({ target }) => setPassword(target.value)}
-          />
-        </label>
-      </div>
-      <button type="submit">login</button>
-    </form>
-  )
+  
 
   const blogForm = () => {
     const hideWhenVisible = { display: createVisible ? 'none' : '' }
@@ -172,27 +84,91 @@ const App = () => {
     )
   }
 
-  const handleLogout = () => {
+
+    const handleLogout = () => {
     window.localStorage.removeItem('loggedBlogAppUser')
     setUser(null)
+    navigate('/')
   }
+
+    //tykkäysten käsittely
+    const handleLikes = (id) => {
+      const blog = blogs.find (b => b.id === id)
+      const changedLikes = { ...blog, likes: blog.likes +1, user: blog.user.id }
+  
+      blogService
+        .update(id, changedLikes)
+        .then(returnedBlog => {
+          const fixedLikesBlog = {
+            ...returnedBlog,
+            user: blog.user
+          }
+          setBlogs(blogs.map(blog => blog.id !== id ? blog : fixedLikesBlog))
+        })
+        .catch(error => {
+          console.error('tykkäys epäonnistui', error)
+          setErrorMessage('Tykkäyksen lisääminen epäonnistui')
+          setTimeout(() => {
+            setErrorMessage(null)
+          }, 5000)
+        })
+    }
+
+
+      //Blogien poistaminen
+      const handleRemoval = (id) => {
+        console.log('poistamista painettu')
+    
+        const deletedBlog = blogs.find((b => b.id === id))
+        if (window.confirm(`Remove blog ${deletedBlog.title} by ${deletedBlog.author}`)){
+    
+          blogService
+            .deleteBlog(id)
+            .then(() => {
+              setBlogs(blogs.filter(b => b.id !== id))
+            })
+            .catch(error => {
+              console.error('poistaminen epäonnistui', error)
+              setErrorMessage('Poistaminen epäonnistui')
+              setTimeout(() => {
+                setErrorMessage(null)
+              }, 5000)
+            })
+        }
+      }
+
+  const match = useMatch('/:id')
+
+  
+  const showblog = match
+    ? blogs.find(blog => blog.id === match.params.id)
+    : null
 
   //kopioidaan blogi taulukko, joka järjestetään tykkäysten perusteella sortilla.
   const sortedBlogs = [...blogs]
   sortedBlogs.sort((a,b) => b.likes - a.likes)
   console.log('blogien liket järjstettynä' , sortedBlogs.map(blog => blog.likes))
 
+
   const padding = {padding: 5}
 
   return (
     <div>
       <div>
-        <Link style={padding} to="blogs">blogs</Link>
+        <Link style={padding} to="/">blogs</Link>
+        {user && (
+          <div>
+          <p>{user.name} logged in </p>
+          <button onClick={handleLogout}>logout</button>
+          </div>
+        )}
+        {!user && (
         <Link style={padding} to="login">login</Link>
+        )}
       </div>
 
       <Routes>
-        <Route path="/blogs" element={<BlogPage 
+        <Route path="/" element={<BlogPage 
           blogForm={blogForm}
           user={user}
           sortedBlogs={sortedBlogs}
@@ -201,9 +177,21 @@ const App = () => {
           handleRemoval={handleRemoval}
          />} />
          <Route path="/login" element={<LoginPage 
-         loginform={loginForm}
          user={user}
+         setUser={setUser}
+         handleUsernameChange={({ target }) => setUsername(target.value)}
+         handlePasswordChange={({ target }) => setPassword(target.value)}
+
          />} />
+        <Route path="/:id" element={
+          <Blog 
+          blog={showblog}
+          handleRemoval={handleRemoval}
+          handleLikes={handleLikes}
+          blogs={blogs}
+          user={user}
+          />
+        } />
       </Routes>
 
 
